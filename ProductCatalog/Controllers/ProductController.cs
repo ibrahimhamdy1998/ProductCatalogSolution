@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using ProductCatalog.Application.IServices;
@@ -50,14 +51,14 @@ namespace ProductCatalog.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Categories = await _productService.GetProductCategoriesAsync();
             return View();
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(ProductViewModel product)
         {
             if (!ModelState.IsValid)
@@ -93,7 +94,7 @@ namespace ProductCatalog.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -105,7 +106,7 @@ namespace ProductCatalog.Controllers
             return View(product);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(ProductViewModel product)
         {
             if (ModelState.IsValid)
@@ -116,7 +117,7 @@ namespace ProductCatalog.Controllers
             ViewBag.Categories = await _productService.GetProductCategoriesAsync();
             return View(product);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -127,7 +128,7 @@ namespace ProductCatalog.Controllers
             return View(product);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, Authorize(Roles = "Admin"), ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _productService.DeleteProductAsync(id);
