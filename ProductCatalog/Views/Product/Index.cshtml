@@ -1,0 +1,73 @@
+﻿@model IEnumerable<ProductCatalog.Core.Entities.Product>
+
+@using ProductCatalog.Core.Entities;
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products Management</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Product</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Duration</th>
+            <th>Start Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Category.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Duration</td>
+                <td>@item.StartDate.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    <button data-id="@item.Id" id="deleteButton"  class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#deleteButton").click(function () {
+                debugger;
+                var productId = $(this).data('id');
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '@Url.Action("Delete", "Product")',
+                    type: 'POST',
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: productId
+                    },
+                    success: function (response) {
+                        window.location.href = '@Url.Action("Index", "Product")';
+                    },
+                    error: function () {
+                        alert('Error deleting product.');
+                    }
+                });
+            });
+        });
+
+    </script>
+
+}
